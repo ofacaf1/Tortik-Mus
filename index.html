@@ -300,9 +300,7 @@
       li.className = 'track' + (i === currentIndex ? ' active' : '');
       li.innerHTML = `
         <div class="idx">${i === currentIndex ? '▶' : i + 1}</div>
-        <div class="meta"><div class="t">${t.title}</div><div class="a">${t.author}</div></div>
-        <button class="del" title="Удалить" onclick="event.stopPropagation(); window.deleteTrack(${t.id})">✕</button>
-      `;
+        <div class="meta"><div class="t">${t.title}</div><div class="a">${t.author}</div></div>;
       li.addEventListener('click', () => selectTrack(i));
       listEl.appendChild(li);
     });
