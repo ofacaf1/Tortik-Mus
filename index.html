@@ -81,15 +81,7 @@
   .icon-btn:hover{ background: rgba(255,255,255,.15); }
   .icon-btn:active{ transform: scale(.94); }
   
-  /* Кнопка добавления в плейлист */
-  #addTrackBtn { 
-    display: none; 
-    background: rgba(255,92,138,.15); 
-    border-color: rgba(255,92,138,.4); 
-    color: var(--accent); 
-    font-size: 20px; 
-    font-weight: bold;
-  }
+  #addTrackBtn { display: none; background: rgba(255,92,138,.15); border-color: rgba(255,92,138,.4); color: var(--accent); font-size: 20px; font-weight: bold; }
   #addTrackBtn:hover { background: rgba(255,92,138,.3); }
   #addTrackBtn.show { display: grid; }
 
@@ -99,16 +91,17 @@
   .count{ font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(255,92,138,.16); color: var(--accent); text-transform: none; }
   
   /* Секция плейлистов */
-  .playlist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .playlist-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .playlist-btn { 
-    background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--text); 
-    padding: 4px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all .15s; 
-  }
-  .playlist-btn:hover { background: rgba(255,255,255,.15); }
-  .playlist-btn.active { background: rgba(255,92,138,.2); border-color: rgba(255,92,138,.5); color: var(--accent); }
-  .playlist-btn.all-tracks { background: rgba(255,255,255,.1); font-weight: bold; }
+  .playlist-btn-wrapper { display: flex; align-items: center; background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .playlist-btn-wrapper.active { background: rgba(255,92,138,.2); border-color: rgba(255,92,138,.5); }
   
+  .playlist-btn { background: transparent; border: none; color: var(--text); padding: 6px 10px; font-size: 12px; cursor: pointer; transition: color .15s; }
+  .playlist-btn-wrapper.active .playlist-btn { color: var(--accent); font-weight: bold; }
+  .playlist-btn-wrapper.all-tracks { background: rgba(255,255,255,.1); font-weight: bold; border: none; }
+  
+  .del-playlist-btn { background: transparent; border: none; color: var(--muted); padding: 6px 8px; cursor: pointer; font-size: 12px; transition: color .15s, background .15s; border-left: 1px solid var(--line); }
+  .del-playlist-btn:hover { color: var(--danger); background: rgba(255,77,77,.2); }
+
   .add-playlist-form { display: flex; gap: 6px; margin-bottom: 14px; }
   .add-playlist-form input { flex: 1; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: rgba(0,0,0,.2); color: var(--text); font-size: 12px; outline: none;}
   .add-playlist-form button { padding: 6px 12px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; font-weight: bold; font-size: 12px;}
@@ -124,6 +117,10 @@
   .track .meta{ flex: 1; min-width: 0; }
   .track .t{ font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
   .track .a{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  /* Кнопка удаления из плейлиста */
+  .track .remove-from-pl { flex: none; border: none; background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; padding: 5px 7px; border-radius: 8px; transition: color .15s, background .15s; }
+  .track .remove-from-pl:hover { color: var(--danger); background: rgba(255,77,77,.14); }
   
   .explicit-badge { font-size: 9px; font-weight: 700; background: var(--danger); color: #fff; padding: 1px 4px; border-radius: 4px; line-height: 1.2; letter-spacing: .5px; }
 
@@ -145,23 +142,13 @@
   footer{ margin-top: 34px; text-align: center; font-size: 12px; color: rgba(162,148,181,.6); }
   #audio{ display: none; }
 
-  /* Модальное окно выбора плейлиста */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
-  }
+  /* Модальное окно */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
   .modal-overlay.show { display: flex; }
-  .modal-content {
-    background: #1f1a28; border: 1px solid var(--line); border-radius: 16px; padding: 20px;
-    width: 90%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,.5);
-  }
+  .modal-content { background: #1f1a28; border: 1px solid var(--line); border-radius: 16px; padding: 20px; width: 90%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
   .modal-content h3 { margin: 0 0 15px; font-size: 16px; color: var(--text); text-align: center; }
   .modal-list { list-style: none; padding: 0; margin: 0 0 15px; max-height: 200px; overflow-y: auto; }
-  .modal-list li {
-    padding: 10px; background: rgba(255,255,255,.05); margin-bottom: 6px; border-radius: 8px;
-    cursor: pointer; transition: background .15s; font-size: 14px;
-  }
+  .modal-list li { padding: 10px; background: rgba(255,255,255,.05); margin-bottom: 6px; border-radius: 8px; cursor: pointer; transition: background .15s; font-size: 14px; }
   .modal-list li:hover { background: rgba(255,92,138,.2); }
   .modal-close { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; cursor: pointer; }
 </style>
@@ -223,18 +210,13 @@
 
   <div class="grid">
     <section class="card">
-      
-      <!-- БЛОК ПЛЕЙЛИСТОВ -->
       <h2>Плейлисты</h2>
       <div class="add-playlist-form">
         <input type="text" id="newPlaylistName" placeholder="Название плейлиста..." autocomplete="off">
         <button id="createPlaylistBtn">Создать</button>
       </div>
-      <div class="playlist-list" id="playlistList">
-        <!-- Сюда будут рендериться кнопки плейлистов -->
-      </div>
+      <div class="playlist-list" id="playlistList"></div>
       
-      <!-- СПИСОК ТРЕКОВ -->
       <h2 style="margin-top: 20px;">Треки <span class="count" id="count">0</span></h2>
       <ul class="list" id="list"></ul>
       <p class="empty" id="empty">Пока пусто. Опубликуйте первый трек — форма справа →</p>
@@ -253,7 +235,7 @@
         </label>
         <label class="field">
           Автор
-          <input type="text" id="authorInput" placeholder="Автор трека" autocomplete="off">
+          <input type="text" id="authorInput" placeholder="Имя/псевдоним автора" autocomplete="off">
         </label>
         
         <label class="checkbox-field">
@@ -266,10 +248,9 @@
       </form>
     </section>
   </div>
-  <footer>Tortik Mus · Сделано с любовью к музыке и тортикам</footer>
+  <footer>Tortik Mus · Сделано с любовью и Дипсиком</footer>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА ПЛЕЙЛИСТА -->
 <div class="modal-overlay" id="playlistModal">
   <div class="modal-content">
     <h3>Добавить в плейлист</h3>
@@ -334,7 +315,6 @@
   const explicitToggle = document.getElementById('explicitToggle');
   const explicitInput = document.getElementById('explicitInput');
   
-  // Плейлисты DOM
   const newPlaylistName = document.getElementById('newPlaylistName');
   const createPlaylistBtn = document.getElementById('createPlaylistBtn');
   const playlistList = document.getElementById('playlistList');
@@ -342,9 +322,8 @@
   const modalPlaylistList = document.getElementById('modalPlaylistList');
   const closeModalBtn = document.getElementById('closeModalBtn');
 
-  // Состояние
-  let allTracks = []; // Все треки с сервера
-  let currentViewTracks = []; // Треки, которые сейчас видит пользователь (с учетом фильтров)
+  let allTracks = []; 
+  let currentViewTracks = []; 
   let currentIndex = -1;
   let pendingFile = null;
   let isPlaying = false;
@@ -352,12 +331,8 @@
   let phase = 0;
   let hideExplicit = false;
   
-  // Состояние плейлистов
   let playlists = JSON.parse(localStorage.getItem('tortik_playlists') || '[]');
-  let activePlaylistId = null; // null означает "Все треки"
-
-  // Инициализация аудио графа
-  function ensureAudioGraph() {}
+  let activePlaylistId = null; 
 
   function resizeCanvas() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -405,30 +380,51 @@
   function setProgress(ratio) { const pct = (Math.min(1, Math.max(0, ratio)) * 100).toFixed(2) + '%'; fill.style.width = pct; knob.style.left = pct; }
 
   // ==========================================
-  // ЛОГИКА ПЛЕЙЛИСТОВ
+  // ПЛЕЙЛИСТЫ
   // ==========================================
   
-  function savePlaylists() {
-    localStorage.setItem('tortik_playlists', JSON.stringify(playlists));
-  }
+  function savePlaylists() { localStorage.setItem('tortik_playlists', JSON.stringify(playlists)); }
 
   function renderPlaylists() {
     playlistList.innerHTML = '';
     
     // Кнопка "Все треки"
+    const allWrapper = document.createElement('div');
+    allWrapper.className = 'playlist-btn-wrapper all-tracks';
     const allBtn = document.createElement('button');
-    allBtn.className = 'playlist-btn all-tracks' + (activePlaylistId === null ? ' active' : '');
+    allBtn.className = 'playlist-btn';
     allBtn.textContent = 'Все треки';
     allBtn.onclick = () => { activePlaylistId = null; updateView(); };
-    playlistList.appendChild(allBtn);
+    allWrapper.appendChild(allBtn);
+    playlistList.appendChild(allWrapper);
 
     // Пользовательские плейлисты
     playlists.forEach(p => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'playlist-btn-wrapper' + (activePlaylistId === p.id ? ' active' : '');
+      
       const btn = document.createElement('button');
-      btn.className = 'playlist-btn' + (activePlaylistId === p.id ? ' active' : '');
+      btn.className = 'playlist-btn';
       btn.textContent = p.name;
       btn.onclick = () => { activePlaylistId = p.id; updateView(); };
-      playlistList.appendChild(btn);
+      
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-playlist-btn';
+      delBtn.innerHTML = '✕';
+      delBtn.title = 'Удалить плейлист';
+      delBtn.onclick = (e) => {
+          e.stopPropagation();
+          if(confirm(`Удалить плейлист "${p.name}"?`)) {
+              playlists = playlists.filter(pl => pl.id !== p.id);
+              if (activePlaylistId === p.id) activePlaylistId = null;
+              savePlaylists();
+              updateView();
+          }
+      };
+
+      wrapper.appendChild(btn);
+      wrapper.appendChild(delBtn);
+      playlistList.appendChild(wrapper);
     });
   }
 
@@ -438,38 +434,40 @@
     const newPlaylist = { id: 'pl_' + Date.now(), name: name, trackIds: [] };
     playlists.push(newPlaylist);
     savePlaylists();
-    renderPlaylists();
+    updateView();
     newPlaylistName.value = '';
   };
 
+  // Удаление трека ИЗ плейлиста
+  function removeFromPlaylist(trackId) {
+      if (!activePlaylistId) return;
+      const pl = playlists.find(p => p.id === activePlaylistId);
+      if (!pl) return;
+      
+      pl.trackIds = pl.trackIds.filter(id => id !== trackId);
+      savePlaylists();
+      updateView();
+  }
+
   // ==========================================
-  // ЛОГИКА ОТОБРАЖЕНИЯ СПИСКА (ФИЛЬТРАЦИЯ)
+  // ОТОБРАЖЕНИЕ И ФИЛЬТРАЦИЯ
   // ==========================================
 
   function updateView() {
-    // 1. Берем базовый список (все или из плейлиста)
     let baseList = allTracks;
     if (activePlaylistId) {
       const pl = playlists.find(p => p.id === activePlaylistId);
-      if (pl) {
-        baseList = allTracks.filter(t => pl.trackIds.includes(t.id));
-      }
+      if (pl) baseList = allTracks.filter(t => pl.trackIds.includes(t.id));
     }
 
-    // 2. Применяем фильтр 18+
     currentViewTracks = baseList.filter(t => !(hideExplicit && t.is_explicit));
 
-    // 3. Обновляем интерфейс
     renderPlaylists();
     renderList();
     
-    // Если текущий играющий трек не входит в новый список, сбрасываем индекс, 
-    // но музыка продолжает играть (просто визуально кнопка Play останется)
     if (currentIndex !== -1) {
         const currentPlayingId = currentViewTracks[currentIndex]?.id;
-        if (!currentPlayingId) {
-            currentIndex = -1;
-        }
+        if (!currentPlayingId) currentIndex = -1;
     }
   }
 
@@ -490,13 +488,29 @@
       
       const badge = t.is_explicit ? '<span class="explicit-badge">18+</span>' : '';
       
+      // Показываем кнопку удаления, только если мы находимся внутри плейлиста
+      let removeBtnHTML = '';
+      if (activePlaylistId) {
+          removeBtnHTML = `<button class="remove-from-pl" title="Убрать из плейлиста">✕</button>`;
+      }
+      
       li.innerHTML = `
         <div class="idx">${i === currentIndex ? '▶' : i + 1}</div>
         <div class="meta">
           <div class="t">${t.title} ${badge}</div>
           <div class="a">${t.author}</div>
         </div>
+        ${removeBtnHTML}
       `;
+
+      if (activePlaylistId) {
+          const rmBtn = li.querySelector('.remove-from-pl');
+          rmBtn.addEventListener('click', (e) => {
+              e.stopPropagation(); // Чтобы не запускался трек
+              removeFromPlaylist(t.id);
+          });
+      }
+
       li.addEventListener('click', () => selectTrack(i));
       listEl.appendChild(li);
     });
@@ -507,14 +521,14 @@
         nowTitle.textContent = 'Ничего не играет'; 
         nowAuthor.textContent = '—'; 
         document.title = 'Tortik Mus'; 
-        addTrackBtn.classList.remove('show'); // Скрываем кнопку добавления
+        addTrackBtn.classList.remove('show');
         return; 
     }
     const badge = track.is_explicit ? ' [18+]' : '';
     nowTitle.textContent = track.title + badge; 
     nowAuthor.textContent = track.author;
     document.title = track.title + ' — ' + track.author + ' | Tortik Mus';
-    addTrackBtn.classList.add('show'); // Показываем кнопку добавления
+    addTrackBtn.classList.add('show');
   }
 
   // ==========================================
@@ -541,32 +555,14 @@
     return nextIdx;
   }
 
-  function selectTrack(index) { 
-    if (index === currentIndex) togglePlay(); 
-    else loadTrack(index, true); 
-  }
+  function selectTrack(index) { if (index === currentIndex) togglePlay(); else loadTrack(index, true); }
+  function togglePlay() { if (currentViewTracks.length === 0) return; if (currentIndex === -1) loadTrack(0, true); else if (audio.paused) playAudio(); else audio.pause(); }
 
-  function togglePlay() { 
-    if (currentViewTracks.length === 0) return; 
-    if (currentIndex === -1) loadTrack(0, true); 
-    else if (audio.paused) playAudio(); 
-    else audio.pause(); 
-  }
-
-  // ==========================================
-  // ДОБАВЛЕНИЕ В ПЛЕЙЛИСТ
-  // ==========================================
-  
   addTrackBtn.addEventListener('click', () => {
     if (currentIndex === -1 || currentViewTracks.length === 0) return;
     const track = currentViewTracks[currentIndex];
-    
-    if (playlists.length === 0) {
-        alert('У вас нет плейлистов. Создайте первый плейлист в левой панели!');
-        return;
-    }
+    if (playlists.length === 0) { alert('Создайте первый плейлист!'); return; }
 
-    // Заполняем модальное окно списком плейлистов
     modalPlaylistList.innerHTML = '';
     playlists.forEach(pl => {
         const li = document.createElement('li');
@@ -577,16 +573,13 @@
                 pl.trackIds.push(track.id);
                 savePlaylists();
                 playlistModal.classList.remove('show');
-                // Если мы сейчас смотрим этот плейлист, обновляем вид
                 if (activePlaylistId === pl.id) updateView();
             };
         } else {
-            li.style.opacity = '0.5';
-            li.style.cursor = 'default';
+            li.style.opacity = '0.5'; li.style.cursor = 'default';
         }
         modalPlaylistList.appendChild(li);
     });
-
     playlistModal.classList.add('show');
   });
 
@@ -603,7 +596,7 @@
       const { data, error } = await db.from(TABLE_NAME).select('*').order('created_at', { ascending: false });
       if (error) throw error;
       allTracks = data;
-      updateView(); // Инициализируем список
+      updateView();
     } catch (e) {
       console.error(e);
       listEl.innerHTML = '<li style="color:red;padding:10px;">Ошибка загрузки. Проверьте настройки Supabase.</li>';
@@ -704,7 +697,6 @@
     }
   });
 
-  // Инициализация
   resizeCanvas();
   requestAnimationFrame(drawFrame);
   renderPlaylists();
