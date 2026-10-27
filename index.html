@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tortik Mus</title>
-<!-- Подключаем библиотеку Supabase -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍰</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
@@ -78,8 +78,6 @@
   .track .meta{ flex: 1; min-width: 0; }
   .track .t{ font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .track .a{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .track .del{ flex: none; border: none; background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; padding: 5px 7px; border-radius: 8px; transition: color .15s, background .15s; }
-  .track .del:hover{ color: var(--accent); background: rgba(255,92,138,.14); }
   .empty{ margin: 8px 0 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
   .file-drop{ display: block; border: 1.5px dashed rgba(255,255,255,.20); border-radius: 14px; padding: 20px 14px; text-align: center; font-size: 13px; color: var(--muted); cursor: pointer; margin-bottom: 14px; transition: border-color .15s, background .15s, color .15s; word-break: break-word; }
   .file-drop:hover, .file-drop.drag{ border-color: var(--accent); background: rgba(255,92,138,.08); color: var(--text); }
@@ -119,9 +117,27 @@
     </div>
     <div class="brand">
       <h1>Tortik Mus</h1>
-      <p>А че тут писать?</p>
+      <p id="randomQuote">Загрузка...</p>
     </div>
   </header>
+
+  <!-- СКРИПТ ЦИТАТ (СРАБОТАЕТ ДАЖЕ БЕЗ БАЗЫ) -->
+  <script>
+    (function() {
+      const quotes = [
+        "Лайм лучшая соцсеть!",
+        "Хочешь тортик?",
+        ":3",
+        ":p",
+        "Нет, Дипсик, это не так!",
+        "ТАМ НЕ ТАК ПОЕТСЯ!!",
+        "Лайм лучшая соцсеть!"
+      ];
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      const quoteElement = document.getElementById('randomQuote');
+      if (quoteElement) quoteElement.textContent = randomQuote;
+    })();
+  </script>
 
   <section class="card">
     <canvas id="viz" class="viz"></canvas>
@@ -148,7 +164,7 @@
     <section class="card">
       <h2>Треки <span class="count" id="count">0</span></h2>
       <ul class="list" id="list"></ul>
-      <p class="empty" id="empty">Пока пусто. Опубликуйте первый трек — форма справа →</p>
+      <p class="empty" id="empty">Пока пусто. Опубликуйте первый трек</p>
     </section>
 
     <section class="card">
@@ -164,14 +180,14 @@
         </label>
         <label class="field">
           Автор
-          <input type="text" id="authorInput" placeholder="Ваше имя" autocomplete="off">
+          <input type="text" id="authorInput" placeholder="Тот кто создал трек" autocomplete="off">
         </label>
         <button class="submit-btn" type="submit" id="submitBtn">Опубликовать</button>
         <p class="hint">Треки загружаются на сервер и становятся доступны всем.</p>
       </form>
     </section>
   </div>
-  <footer>Tortik Mus · сделано с любовью и Дипсиком</footer>
+  <footer>Tortik Mus · Сделано с любовью и Дипсиком</footer>
 </div>
 
 <audio id="audio" preload="metadata"></audio>
@@ -180,20 +196,19 @@
 (function () {
   'use strict';
 
-  // ==========================================
-  // ⚠️ ВСТАВЬТЕ СЮДА СВОИ ДАННЫЕ ИЗ SUPABASE ⚠️
-  // ==========================================
+  // ==========================================================
+  // ⚠️ ВСТАВЬ СЮДА СВОИ КЛЮЧИ ИЗ SUPABASE ⚠️
+  // ==========================================================
   const SUPABASE_URL = 'https://ivddmxkqcwbmdhbypeoq.supabase.co'; 
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZGRteGtxY3dibWRoYnlwZW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NTY5OTgsImV4cCI6MjEwODQzMjk5OH0.uYAoxE0-7bEbUZb0pPzMiaq3yLSytRkhghrSb89hRYc';
-  // ==========================================
+  // ==========================================================
 
-  // Защита от белого экрана: проверяем, загрузилась ли библиотека и вставлены ли ключи
   if (typeof supabase === 'undefined') {
-    document.body.innerHTML = '<h1 style="color:white; padding:50px; text-align:center;">Ошибка: Библиотека Supabase не загрузилась. Проверьте соединение с интернетом.</h1>';
+    document.body.innerHTML = '<h1 style="color:white; padding:50px; text-align:center;">Ошибка: Библиотека Supabase не загрузилась.</h1>';
     return;
   }
   if (SUPABASE_URL === 'ВАШ_PROJECT_URL' || !SUPABASE_URL.startsWith('https://')) {
-    document.body.innerHTML = '<h1 style="color:white; padding:50px; text-align:center; line-height:1.5;">Ошибка!<br><br>Вы не вставили ключи Supabase.<br>Откройте файл index.html на GitHub, найдите строку 179 и вставьте ваши данные.</h1>';
+    document.body.innerHTML = '<h1 style="color:white; padding:50px; text-align:center; line-height:1.5;">Ошибка!<br><br>Вы не вставили ключи Supabase.</h1>';
     return;
   }
 
@@ -203,7 +218,6 @@
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Элементы
   const audio = document.getElementById('audio');
   const playBtn = document.getElementById('playBtn');
   const prevBtn = document.getElementById('prevBtn');
@@ -244,30 +258,21 @@
   }
   new ResizeObserver(resizeCanvas).observe(canvas);
 
-  // Красивая анимация волны без анализа звука
   function drawFrame() {
     requestAnimationFrame(drawFrame);
     const W = canvas.width, H = canvas.height;
     if (!W || !H) return;
     const mid = H / 2, amp = H * 0.40;
     phase += isPlaying ? 0.15 : 0.045; 
-    
     g2d.clearRect(0, 0, W, H);
-    
     const N = 160;
     const xs = new Float32Array(N + 1), ys = new Float32Array(N + 1);
     for (let i = 0; i <= N; i++) {
       const p = i / N;
       xs[i] = p * W;
-      let v;
-      if (isPlaying) {
-        v = Math.sin(i * 0.15 + phase) * 0.3 + Math.cos(i * 0.3 + phase * 2) * 0.15;
-      } else {
-        v = Math.sin(i * 0.12 + phase) * 0.10;
-      }
+      let v = isPlaying ? Math.sin(i * 0.15 + phase) * 0.3 + Math.cos(i * 0.3 + phase * 2) * 0.15 : Math.sin(i * 0.12 + phase) * 0.10;
       ys[i] = mid + v * amp * (0.35 + 0.65 * Math.sin(Math.PI * p));
     }
-    
     g2d.beginPath(); g2d.moveTo(xs[0], mid);
     for (let i = 0; i <= N; i++) g2d.lineTo(xs[i], ys[i]);
     g2d.lineTo(xs[N], mid); g2d.closePath();
@@ -280,7 +285,6 @@
     const lineGrad = g2d.createLinearGradient(0, 0, W, 0);
     lineGrad.addColorStop(0, '#ff5c8a'); lineGrad.addColorStop(0.5, '#ffd08a'); lineGrad.addColorStop(1, '#ff5c8a');
     g2d.strokeStyle = lineGrad; g2d.lineWidth = Math.max(1.5, H / 60); g2d.lineJoin = 'round'; g2d.lineCap = 'round'; g2d.stroke();
-    
     if (!dragging && isPlaying && isFinite(audio.duration) && audio.duration > 0) {
       setProgress(audio.currentTime / audio.duration);
       curTimeEl.textContent = fmt(audio.currentTime);
@@ -300,21 +304,11 @@
       li.innerHTML = `
         <div class="idx">${i === currentIndex ? '▶' : i + 1}</div>
         <div class="meta"><div class="t">${t.title}</div><div class="a">${t.author}</div></div>
-        <button class="del" title="Удалить" onclick="event.stopPropagation(); window.deleteTrack(${t.id})">✕</button>
       `;
       li.addEventListener('click', () => selectTrack(i));
       listEl.appendChild(li);
     });
   }
-
-  window.deleteTrack = async function(id) {
-    if(!confirm('Удалить трек?')) return;
-    const idx = tracks.findIndex(t => t.id === id);
-    if (idx === currentIndex) { audio.pause(); currentIndex = -1; updateNowPlaying(null); }
-    await db.from(TABLE_NAME).delete().eq('id', id);
-    tracks.splice(idx, 1);
-    renderList();
-  };
 
   function updateNowPlaying(track) {
     if (!track) { nowTitle.textContent = 'Ничего не играет'; nowAuthor.textContent = '—'; document.title = 'Tortik Mus'; return; }
@@ -323,7 +317,6 @@
   }
 
   function playAudio() { audio.play().catch(e => console.warn(e)); }
-  
   function loadTrack(index, autoplay) {
     if (index < 0 || index >= tracks.length) return;
     const t = tracks[index];
@@ -335,7 +328,6 @@
     renderList();
     if (autoplay) playAudio();
   }
-
   function selectTrack(index) { if (index === currentIndex) togglePlay(); else loadTrack(index, true); }
   function togglePlay() { if (!tracks.length) return; if (currentIndex === -1) loadTrack(0, true); else if (audio.paused) playAudio(); else audio.pause(); }
 
