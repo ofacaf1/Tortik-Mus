@@ -117,27 +117,9 @@
     </div>
     <div class="brand">
       <h1>Tortik Mus</h1>
-      <p id="randomQuote">Загрузка...</p>
+      <p>Там не так поется!!</p></p>
     </div>
   </header>
-
-  <!-- СКРИПТ ЦИТАТ (СРАБОТАЕТ ДАЖЕ БЕЗ БАЗЫ) -->
-  <script>
-    (function() {
-      const quotes = [
-        "Лайм лучшая соцсеть!",
-        "Хочешь тортик?",
-        ":3",
-        ":p",
-        "Нет, Дипсик, это не так!",
-        "ТАМ НЕ ТАК ПОЕТСЯ!!",
-        "Лайм лучшая соцсеть!"
-      ];
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      const quoteElement = document.getElementById('randomQuote');
-      if (quoteElement) quoteElement.textContent = randomQuote;
-    })();
-  </script>
 
   <section class="card">
     <canvas id="viz" class="viz"></canvas>
